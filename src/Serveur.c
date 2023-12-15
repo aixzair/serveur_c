@@ -90,7 +90,7 @@ int main() {
 
 		// On reçoit le message
 		memset(messageRecu, 0x00, LONGUEUR_MESSAGE * sizeof(char));
-		if (!recevoirMessage(socketDialogue, messageRecu, LG_MESSAGE * sizeof(char))) {
+		if (!recevoirMessage(socketDialogue, messageRecu, LONGUEUR_MESSAGE * sizeof(char))) {
 			return EXIT_FAILURE;
 		}
 		

@@ -1,7 +1,7 @@
 #include "Message.h"
 
 short recevoirMessage(int socket, char *message, int longueur) {
-	switch (read(socket, message, LG_MESSAGE * sizeof(char))) {
+	switch (read(socket, message, LONGUEUR_MESSAGE * sizeof(char))) {
 	case -1:
 		perror("Erreur lors de la réception des données (read)\n");
 		close(socket);
