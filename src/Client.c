@@ -9,6 +9,8 @@
 #include <netinet/in.h> /* pour struct sockaddr_in */
 #include <arpa/inet.h> /* pour htons et inet_aton */
 
+#include "Message.h"
+
 #define LONGUEUR_TEXTE 500
 
 int main(int argc, char *argv[]) {
@@ -56,32 +58,18 @@ int main(int argc, char *argv[]) {
     memset(messageRecus, 0x00, LONGUEUR_TEXTE * sizeof(char));
     
     sprintf(messageEnvoye, argv[3]);
-    
-    switch (write(socket_d, messageEnvoye, strlen(messageEnvoye))) {
-    case -1:
-        perror("Message non envoyé.");
-        close(socket_d);
-        exit(-3);
-    case 0:
-        fprintf(stderr, "Le socket a été fermé par le serveur.");
-        close(socket_d);
-        return 0;
-    default:
-        printf("Message envoyé.\n");
+
+    // Envoie le message au serveur
+    if (!recevoirMessage(socket_d, messageEnvoye, strlen(messageEnvoye))) {
+        return EXIT_FAILURE;
     }
     
-    switch (read(socket_d, messageRecus, LONGUEUR_TEXTE * sizeof(char))) {
-    case -1:
-        perror("Message non reçus.");
-        close(socket_d);
-        exit(-4);
-    case 0:
-        fprintf(stderr, "Le socket a été fermé par le serveur.");
-        close(socket_d);
-        return 0;
-    default:
-        printf("Message reçus : %s\n.", messageRecus);
+    // Reçoit le message
+    if (!recevoirMessage(socket_d, messageRecus, LONGUEUR_MESSAGE * sizeof(char))) {
+        return EXIT_FAILURE;
     }
+
+    printf("Message reçus : %s\n.", messageRecus);
     
     close(socket_d);
 

@@ -10,34 +10,7 @@
 #include <sys/socket.h>
 
 #include "Matiere.h"
-
-#define LG_MESSAGE 256
-
-short recevoirMessage(int socket, char *message, int longueur) {
-	switch (read(socketDialogue, messageRecu, LG_MESSAGE * sizeof(char))) {
-	case -1:
-		perror("Erreur lors de la réception des données (read)\n");
-		close(socketDialogue);
-		return -1;
-	case 0:
-		perror("Le socket a été fermé par le client!\n");
-		close(socketDialogue);
-		return 0;
-	}
-	return 1;
-}
-
-short envoyerMessage(int socket, const char *message, int longueur) {
-	switch (write(socket, message, longueur)) {
-	case -1:
-		perror("Erreur lors de l'envoie des données (write)\n");
-		return -1;
-	case 0:
-		perror("Le socket a été fermé par le client !\n");
-		return 0;
-	}
-	return 1;
-}
+#include "Message.h"
 
 struct sockaddr_in creerServeur(short family, uint16_t port) {
 	struct sockaddr_in serveur;
@@ -116,13 +89,13 @@ int main() {
 		}
 
 		// On reçoit le message
-		memset(messageRecu, 0x00, LG_MESSAGE * sizeof(char));
+		memset(messageRecu, 0x00, LONGUEUR_MESSAGE * sizeof(char));
 		if (!recevoirMessage(socketDialogue, messageRecu, LG_MESSAGE * sizeof(char))) {
 			return EXIT_FAILURE;
 		}
 		
 		// On écrit le message à envoyer
-		memset(messageEnvoi, 0x00, LG_MESSAGE * sizeof(char));
+		memset(messageEnvoi, 0x00, LONGUEUR_MESSAGE * sizeof(char));
 		sprintf(messageEnvoi, "%f\n", trouverMoyenne(atoi(messageRecu), matieres));
 
 		// On envoie le message
