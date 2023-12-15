@@ -20,8 +20,7 @@ int main(int argc, char *argv[]) {
     }
 
     int socket_d;
-    char messageEnvoye[LONGUEUR_TEXTE];
-    char messageRecus[LONGUEUR_TEXTE];
+    char message[LONGUEUR_TEXTE];
     struct sockaddr_in pointDistant;
     socklen_t adresseLongueur;
     
@@ -53,23 +52,21 @@ int main(int argc, char *argv[]) {
     }
     
     printf("Connexion réussie !\n");
-    
-    memset(messageEnvoye, 0x00, LONGUEUR_TEXTE * sizeof(char));
-    memset(messageRecus, 0x00, LONGUEUR_TEXTE * sizeof(char));
-    
-    sprintf(messageEnvoye, argv[3]);
 
     // Envoie le message au serveur
-    if (!envoyerMessage(socket_d, messageEnvoye, strlen(messageEnvoye))) {
+    memset(message, 0x00, LONGUEUR_TEXTE * sizeof(char));
+    sprintf(message, argv[3]);
+    if (!envoyerMessage(socket_d, message, strlen(message))) {
         return EXIT_FAILURE;
     }
     
     // Reçoit le message
-    if (!recevoirMessage(socket_d, messageRecus, LONGUEUR_MESSAGE * sizeof(char))) {
+    memset(message, 0x00, LONGUEUR_TEXTE * sizeof(char));
+    if (!recevoirMessage(socket_d, message, LONGUEUR_MESSAGE * sizeof(char))) {
         return EXIT_FAILURE;
     }
 
-    printf("Message reçus : %s\n.", messageRecus);
+    printf("Message reçus : %.2f\n.", strtof(message, NULL));
     
     close(socket_d);
 
