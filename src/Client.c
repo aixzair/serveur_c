@@ -56,12 +56,14 @@ int main(int argc, char *argv[]) {
     // Envoie le message au serveur
     memset(message, 0x00, LONGUEUR_TEXTE * sizeof(char));
     sprintf(message, argv[3]);
+
     if (!envoyerMessage(socket_d, message, strlen(message))) {
         return EXIT_FAILURE;
     }
     
     // Reçoit le message
     memset(message, 0x00, LONGUEUR_TEXTE * sizeof(char));
+    
     if (!recevoirMessage(socket_d, message, LONGUEUR_MESSAGE * sizeof(char))) {
         return EXIT_FAILURE;
     }
