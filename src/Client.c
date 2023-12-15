@@ -21,15 +21,15 @@ int main(int argc, char *argv[]) {
     char messageEnvoye[LONGUEUR_TEXTE];
     char messageRecus[LONGUEUR_TEXTE];
     struct sockaddr_in pointDistant;
-    socklen_t longueurAdresse;
+    socklen_t adresseLongueur;
     
     if ((socket_d = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
         perror("Erreur lors de la création du descripteur socket.");
         exit(EXIT_FAILURE);
     }
     
-    longueurAdresse = sizeof(pointDistant);
-    memset(&pointDistant, 0x00, longueurAdresse);
+    adresseLongueur = sizeof(pointDistant);
+    memset(&pointDistant, 0x00, adresseLongueur);
     
     // Renseigne la structure sockaddr_in avec les informations du serveur distant AF > PF
     pointDistant.sin_family = PF_INET;
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
         (connect(
             socket_d,
             (struct sockaddr*) &pointDistant,
-            longueurAdresse
+            adresseLongueur
         )) == -1
     ) {
         perror("Erreur lors de la connection"); // Affiche le message d’erreur
