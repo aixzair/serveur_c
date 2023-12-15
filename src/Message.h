@@ -6,4 +6,4 @@
 short recevoirMessage(int socket, char *message, int longueur);
 short recevoirMessage(int socket, char *message, int longueur);
 
-#endif;
+#endif

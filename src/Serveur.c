@@ -52,8 +52,8 @@ int main() {
 
 	socklen_t adresseLongueur = sizeof(struct sockaddr_in);
 
-	char messageEnvoi[LG_MESSAGE];
-	char messageRecu[LG_MESSAGE];	
+	char messageEnvoi[LONGUEUR_MESSAGE];
+	char messageRecu[LONGUEUR_MESSAGE];	
 	
 	// Crée un socket de communication
 	if ((socketEcoute = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
