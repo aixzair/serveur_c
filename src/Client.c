@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     sprintf(messageEnvoye, argv[3]);
 
     // Envoie le message au serveur
-    if (!recevoirMessage(socket_d, messageEnvoye, strlen(messageEnvoye))) {
+    if (!envoyerMessage(socket_d, messageEnvoye, strlen(messageEnvoye))) {
         return EXIT_FAILURE;
     }
     
