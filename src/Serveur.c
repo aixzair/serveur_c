@@ -103,8 +103,6 @@ int main() {
 			return EXIT_FAILURE;
 		}
 
-		sleep(5);
-
 		close(socketDialogue);
 	}
 
