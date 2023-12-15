@@ -99,14 +99,10 @@ int main(void) {
 
     // On attend une connexion
     while (1) {
-        printf("Attente d'une demande de connexion (quitter avec Ctrl-C)\n\n");
-
         // Création du socket de dialogue
         if ((socketDialogue = accept(socketEcoute, (struct sockaddr *)&pointDeRencontreDistant, &adresseLongueur)) < 0) {
             perror("Erreur lors de la création du socket de dialogue\n");
-            close(socketDialogue);
             close(socketEcoute);
-
             return EXIT_FAILURE;
         }
 
@@ -114,9 +110,7 @@ int main(void) {
         pthread_t thread;
         if (pthread_create(&thread, NULL, traiterClient, &socketDialogue) != 0) {
             perror("Erreur lors de la création du thread\n");
-            close(socketDialogue);
             close(socketEcoute);
-
             return EXIT_FAILURE;
         }
 
