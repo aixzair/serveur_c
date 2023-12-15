@@ -63,12 +63,12 @@ int main(int argc, char *argv[]) {
     
     // Reçoit le message
     memset(message, 0x00, LONGUEUR_TEXTE * sizeof(char));
-    
+
     if (!recevoirMessage(socket_d, message, LONGUEUR_MESSAGE * sizeof(char))) {
         return EXIT_FAILURE;
     }
 
-    printf("Message reçus : %.2f\n.", strtof(message, NULL));
+    printf("Message reçus : %.2f.\n", strtof(message, NULL));
     
     close(socket_d);
 
