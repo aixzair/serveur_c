@@ -72,6 +72,8 @@ void *traiterClient(void *arg) {
         perror("Erreur lors de l'envoi du message\n");
     }
 
+    sleep(5);
+
     close(socketDialogue);
     pthread_exit(NULL);
 }
