@@ -99,6 +99,8 @@ int main(void) {
 
     // On attend une connexion
     while (1) {
+        printf("Attente d'une demande de connexion (quitter avec Ctrl-C)\n\n");
+
         // Création du socket de dialogue
         if ((socketDialogue = accept(socketEcoute, (struct sockaddr *)&pointDeRencontreDistant, &adresseLongueur)) < 0) {
             perror("Erreur lors de la création du socket de dialogue\n");
