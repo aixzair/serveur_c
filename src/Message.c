@@ -14,13 +14,13 @@ short recevoirMessage(int socket, char *message, int longueur) {
 	return 1;
 }
 
-short recevoirMessage(int socket, char *message, int longueur) {
+short envoyerMessage(int socket, const char *message, int longueur) {
 	switch (write(socket, message, longueur)) {
 	case -1:
 		perror("Erreur lors de l'envoie des données (write)\n");
 		return -1;
 	case 0:
-		perror("Le socket a été fermé!\n");
+		perror("Le socket a été fermé par le client !\n");
 		return 0;
 	}
 	return 1;
