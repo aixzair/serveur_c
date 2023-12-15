@@ -69,6 +69,7 @@ int main(int argc, char *argv[]) {
     }
 
     printf("Message reçus : %.2f.\n", strtof(message, NULL));
+    sleep(5);
     
     close(socket_d);
 

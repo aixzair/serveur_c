@@ -98,12 +98,12 @@ int main() {
 		memset(messageEnvoi, 0x00, LONGUEUR_MESSAGE * sizeof(char));
 		sprintf(messageEnvoi, "%f\n", trouverMoyenne(atoi(messageRecu), matieres));
 
-		sleep(5);
-
 		// On envoie le message
 		if (!envoyerMessage(socketDialogue, messageEnvoi, strlen(messageEnvoi))) {
 			return EXIT_FAILURE;
 		}
+
+		sleep(5);
 
 		close(socketDialogue);
 	}
