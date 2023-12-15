@@ -68,7 +68,10 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    printf("Message reçus : %.2f.\n", strtof(message, NULL));    
+    printf("Message reçus : %.2f.\n", strtof(message, NULL));
+
+    sleep(5);
+
     close(socket_d);
 
     return EXIT_SUCCESS;
