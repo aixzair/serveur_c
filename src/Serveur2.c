@@ -51,7 +51,7 @@ float trouverMoyenne(int id, Matiere matieres[]) {
 }
 
 void *traiterClient(void *arg) {
-    int socketDialogue = *((int *)arg);
+    int socketDialogue = *((int *) arg);
     char messageRecu[LONGUEUR_MESSAGE];
     char messageEnvoi[LONGUEUR_MESSAGE];
 
@@ -71,8 +71,6 @@ void *traiterClient(void *arg) {
     if (!envoyerMessage(socketDialogue, messageEnvoi, strlen(messageEnvoi))) {
         perror("Erreur lors de l'envoi du message\n");
     }
-
-    sleep(5);
 
     close(socketDialogue);
     pthread_exit(NULL);

@@ -1,0 +1,5 @@
+serveur :
+gcc -Wall Serveur.c Message.c -o Serveur && ./Serveur
+
+client : 
+gcc -Wall Client.c Message.c -o Client && ./Client ip port message
