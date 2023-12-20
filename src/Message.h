@@ -7,7 +7,13 @@
 
 #define LONGUEUR_MESSAGE 500
 
-short recevoirMessage(int socket, char *message, int longueur);
-short envoyerMessage(int socket, const char *message, int longueur);
+typedef enum Message_e {
+    MESSAGE_OK = 1,
+    MESSAGE_ERREUR = -1,
+    MESSAGE_SOCKET = -2
+} Message;
+
+Message recevoirMessage(int socket, char *message, int longueur);
+Message envoyerMessage(int socket, const char *message, int longueur);
 
 #endif

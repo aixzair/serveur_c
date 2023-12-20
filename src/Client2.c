@@ -35,12 +35,13 @@ int main(int argc, char *argv[]) {
     int socketServeur;
     struct sockaddr_in serveur;
 
+    int stop;
     char message[LONGUEUR_TEXTE];
 
     // Vérification des paramètres
     if (argc != 4) {
         fprintf(stderr, "Nombre d'arguments incorrecte.\n");
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     // Création du socket
@@ -77,10 +78,22 @@ int main(int argc, char *argv[]) {
         
         return EXIT_FAILURE;
     }
-
-    // Reçoit le message
+    
+    // Affiche la moyenne si il n'arrête pas le serveur
+    stop = (strcmp(message, "STOP") == 0)? 1 : 0;
     memset(message, 0x00, LONGUEUR_TEXTE * sizeof(char));
-    if (!recevoirMessage(socketServeur, message, LONGUEUR_MESSAGE * sizeof(char))) {
+    
+    switch (recevoirMessage(socketServeur, message, LONGUEUR_MESSAGE * sizeof(char))) {
+    case MESSAGE_OK:
+        printf("Message reçus : %.2f.\n", strtof(message, NULL));
+        break;
+        
+    case MESSAGE_SOCKET:
+        if (stop) {
+            printf("Serveur arrêté avec succés !\n");
+            break;
+        }
+    case MESSAGE_ERREUR:
         close(socketServeur);
         
         return EXIT_FAILURE;
@@ -88,9 +101,6 @@ int main(int argc, char *argv[]) {
 
     // Ferme la socket
     close(socketServeur);
-
-    // Affiche le message reçus
-    printf("Message reçus : %.2f.\n", strtof(message, NULL));
 
     return EXIT_SUCCESS;
 }

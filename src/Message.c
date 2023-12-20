@@ -1,27 +1,21 @@
 #include "Message.h"
 
-short recevoirMessage(int socket, char *message, int longueur) {
+Message recevoirMessage(int socket, char *message, int longueur) {
 	switch (read(socket, message, LONGUEUR_MESSAGE * sizeof(char))) {
 	case -1:
-		perror("Erreur lors de la réception des données (read)\n");
-		close(socket);
-		return -1;
+		return MESSAGE_ERREUR;
 	case 0:
-		perror("Le socket a été fermé!\n");
-		close(socket);
-		return 0;
+		return MESSAGE_SOCKET;
 	}
-	return 1;
+	return MESSAGE_OK;
 }
 
-short envoyerMessage(int socket, const char *message, int longueur) {
+Message envoyerMessage(int socket, const char *message, int longueur) {
 	switch (write(socket, message, longueur)) {
 	case -1:
-		perror("Erreur lors de l'envoie des données (write)\n");
-		return -1;
+		return MESSAGE_ERREUR;
 	case 0:
-		perror("Le socket a été fermé par le client !\n");
-		return 0;
+		return MESSAGE_SOCKET;
 	}
-	return 1;
+	return MESSAGE_OK;
 }
