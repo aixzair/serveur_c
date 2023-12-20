@@ -14,27 +14,47 @@
 
 #define NB_MATIERE 6
 
+/**
+ * @brief Structure représentant une matière
+ */
 typedef struct Matiere_s {
-    int id;
-    char nom[50];
-    float moyenne;
+    int id;             /**< identifiant de la matière */
+    char nom[50];       /**< nom de la matière */
+    float moyenne;      /**< moyenne de la matière */
 } Matiere;
 
+/**
+ * @brief Structure représentant les données données au thread
+ */
 typedef struct DataThread_s {
-    int socket;
-    Matiere *matieres;
+    int socket;         /**< socket de communication */
+    Matiere *matieres;  /**< matieres transmisent */
 } DataThread;
 
-struct sockaddr_in creerServeur(short family, uint16_t port) {
+/**
+ * @brief créer un nouveau serveur
+ * 
+ * @param family type d'adresse
+ * @param port du serveur
+ * @return struct sockaddr_in 
+ */
+struct sockaddr_in creerServeur(short int family, uint16_t port) {
     struct sockaddr_in serveur;
 
-    serveur.sin_family = PF_INET;
+    serveur.sin_family = family;
     serveur.sin_addr.s_addr = htonl(INADDR_ANY);
     serveur.sin_port = htons(port);
 
     return serveur;
 }
 
+/**
+ * @brief trouve la moyenne dans un tableau de matière à partir de l'id
+ * 
+ * @param id de la matière
+ * @param matieres tableau de matières
+ * @return float la moyenne
+ */
 float trouverMoyenne(int id, Matiere matieres[]) {
     for (int i = 0; i < NB_MATIERE; i++) {
         if (matieres[i].id == id) {
@@ -44,6 +64,12 @@ float trouverMoyenne(int id, Matiere matieres[]) {
     return -1;
 }
 
+/**
+ * @brief s'occupe de la gestion du client
+ * 
+ * @param arg DataThread données de gestion
+ * @return void* 
+ */
 void *traiterClient(void *arg) {
     DataThread datas = *((DataThread *) arg);
     char messageRecu[LONGUEUR_MESSAGE];
@@ -58,6 +84,7 @@ void *traiterClient(void *arg) {
         pthread_exit(NULL);
     }
     
+    // Arrête le message si c'est STOP
     if (strcmp(messageRecu, "STOP") == 0) {
         close(datas.socket);
         printf("Je me suis arrêté\n");
@@ -80,6 +107,11 @@ void *traiterClient(void *arg) {
     pthread_exit(NULL);
 }
 
+/**
+ * @brief créer le serveur et les sockets puis attends les clients
+ * 
+ * @return int 
+ */
 int main(void) {
     Matiere matieres[NB_MATIERE] = {
         { 1, "Anglais\0", 12.5 },

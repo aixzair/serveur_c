@@ -19,16 +19,30 @@ typedef struct Matiere_s {
     float moyenne;
 } Matiere;
 
-struct sockaddr_in creerServeur(short family, uint16_t port) {
+/**
+* @brief créer un serveur
+* 
+* @param ip adresse ip du serveur
+* @param port port du serveur
+* @return struct sockaddr_in
+*/
+struct sockaddr_in creerServeur(short int family, uint16_t port) {
     struct sockaddr_in serveur;
 
-    serveur.sin_family = PF_INET;
+    serveur.sin_family = family;
     serveur.sin_addr.s_addr = htonl(INADDR_ANY);
     serveur.sin_port = htons(port);
 
     return serveur;
 }
 
+/**
+ * @brief trouve la moyenne dans un tableau de matière à partir de l'id
+ * 
+ * @param id de la matière
+ * @param matieres tableau de matières
+ * @return float la moyenne
+ */
 float trouverMoyenne(int id, Matiere matieres[]){
     for (int i = 0; i < NB_MATIERE; i++) {
         if (matieres[i].id == id) {
