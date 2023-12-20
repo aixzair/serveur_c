@@ -10,30 +10,22 @@
 #include <sys/socket.h>
 #include <pthread.h>
 
-#include "Matiere.h"
 #include "Message.h"
 
-Matiere matieres[] = {
-    { 1,"Anglais\0", 12.5},
-    { 2,"Mathematiques\0", 10.8},
-    { 3,"Informatique\0", 9.3},
-    { 4,"Culturte generale\0", 12.6},
-    { 5,"Physiques\0", 11.8},
-    { 6,"Programmation systeme\0", 12.3}
-};
+typedef struct Matiere_s {
+    int id;
+    char nom[50];
+    float moyenne;
+} Matiere;
 
-int socketEcoute;
-int socketDialogue;
-struct sockaddr_in serveur;
-struct sockaddr_in pointDeRencontreDistant;
-
-socklen_t adresseLongueur = sizeof(struct sockaddr_in);
-
-char messageEnvoi[LONGUEUR_MESSAGE];
-char messageRecu[LONGUEUR_MESSAGE];	
+typedef struct DataThread_s {
+    int socket;
+    Matiere matieres[];
+} DataThread;
 
 struct sockaddr_in creerServeur(short family, uint16_t port) {
     struct sockaddr_in serveur;
+
     serveur.sin_family = PF_INET;
     serveur.sin_addr.s_addr = htonl(INADDR_ANY);
     serveur.sin_port = htons(port);
@@ -51,41 +43,63 @@ float trouverMoyenne(int id, Matiere matieres[]) {
 }
 
 void *traiterClient(void *arg) {
-    int socketDialogue = *((int *) arg);
+    DataThread datas = *((DataThread *) arg);
     char messageRecu[LONGUEUR_MESSAGE];
-    char messageEnvoi[LONGUEUR_MESSAGE];
+    char messageEnvoye[LONGUEUR_MESSAGE];
 
     // On reçoit le message
     memset(messageRecu, 0x00, LONGUEUR_MESSAGE * sizeof(char));
-    if (!recevoirMessage(socketDialogue, messageRecu, LONGUEUR_MESSAGE * sizeof(char))) {
+    if (!recevoirMessage(datas.socket, messageRecu, LONGUEUR_MESSAGE * sizeof(char))) {
         perror("Erreur lors de la réception du message\n");
-        close(socketDialogue);
+        close(datas.socket);
         pthread_exit(NULL);
     }
 
     // On écrit le message à envoyer
-    memset(messageEnvoi, 0x00, LONGUEUR_MESSAGE * sizeof(char));
-    sprintf(messageEnvoi, "%f\n", trouverMoyenne(atoi(messageRecu), matieres));
+    memset(messageEnvoye, 0x00, LONGUEUR_MESSAGE * sizeof(char));
+    sprintf(messageEnvoye, "%f\n", trouverMoyenne(atoi(messageRecu), datas.matieres));
 
     // On envoie le message
-    if (!envoyerMessage(socketDialogue, messageEnvoi, strlen(messageEnvoi))) {
+    if (!envoyerMessage(datas.socket, messageEnvoye, strlen(messageEnvoye))) {
         perror("Erreur lors de l'envoi du message\n");
     }
 
-    close(socketDialogue);
+    // On ferme le socket
+    close(datas.socket);
+    
     pthread_exit(NULL);
 }
 
 int main(void) {
-	// Crée un socket de communication
+    Matiere matieres[] = {
+        { 1, "Anglais\0", 12.5 },
+        { 2, "Mathematiques\0", 10.8 },
+        { 3, "Informatique\0", 9.3 },
+        { 4, "Culturte generale\0", 12.6 },
+        { 5, "Physiques\0", 11.8 },
+        { 6, "Programmation systeme\0", 12.3 }
+    };
+
+    int socketEcoute;
+    int socketDialogue;
+    struct sockaddr_in serveur;
+    socklen_t adresseLongueur;
+
+    pthread_t thread;
+    DataThread datas;
+
+	// Création du socket de communication
 	if ((socketEcoute = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
 		perror("Erreur lors de la création du socket\n");
 		return EXIT_FAILURE;
 	}
 	
+    // Création du serveur
 	serveur = creerServeur(PF_INET, IPPORT_USERRESERVED);
 
 	// On demande l’attachement local au socket
+    adresseLongueur = sizeof(struct sockaddr_in);
+
 	if ((bind(socketEcoute, (struct sockaddr*) &serveur, adresseLongueur)) < 0) {
 		perror("Erreur lors de l'attachement local\n");
 		return EXIT_FAILURE;
@@ -102,15 +116,17 @@ int main(void) {
         printf("Attente d'une demande de connexion (quitter avec Ctrl-C)\n\n");
 
         // Création du socket de dialogue
-        if ((socketDialogue = accept(socketEcoute, (struct sockaddr *)&pointDeRencontreDistant, &adresseLongueur)) < 0) {
+        if ((socketDialogue = accept(socketEcoute, (struct sockaddr *)&serveur, &adresseLongueur)) < 0) {
             perror("Erreur lors de la création du socket de dialogue\n");
             close(socketEcoute);
             return EXIT_FAILURE;
         }
 
         // Création d'un thread pour traiter le client
-        pthread_t thread;
-        if (pthread_create(&thread, NULL, traiterClient, &socketDialogue) != 0) {
+        datas.socket = socketDialogue;
+        datas.matieres = matieres;
+
+        if (pthread_create(&thread, NULL, traiterClient, &datas) != 0) {
             perror("Erreur lors de la création du thread\n");
             close(socketEcoute);
             return EXIT_FAILURE;
