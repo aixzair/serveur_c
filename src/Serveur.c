@@ -13,10 +13,13 @@
 
 #define NB_MATIERE 6
 
+/**
+ * @brief Structure représentant une matière
+ */
 typedef struct Matiere_s {
-    int id;
-    char nom[50];
-    float moyenne;
+    int id;             /**< identifiant de la matière */
+    char nom[50];       /**< nom de la matière */
+    float moyenne;      /**< moyenne de la matière */
 } Matiere;
 
 /**
@@ -43,7 +46,7 @@ struct sockaddr_in creerServeur(short int family, uint16_t port) {
  * @param matieres tableau de matières
  * @return float la moyenne
  */
-float trouverMoyenne(int id, Matiere matieres[]){
+float trouverMoyenne(int id, Matiere matieres[]) {
     for (int i = 0; i < NB_MATIERE; i++) {
         if (matieres[i].id == id) {
             return matieres[i].moyenne;
